@@ -41,7 +41,7 @@ HEADER:{a:,"<html><head>";
 	a,:,addJs'[("sortable.js";"codemirror.js"; "google-jsapi.js")];
 	,/,/ a,:,"</head><body id='dataRes'><div id='inner'>"}[];
 	
-FOOTER:{"</div> <div class='footer'><p><a href='http://www.timestored.com/kdb-guides/kdb-keyword-reference'>Function List</a> | <a href='http://www.timestored.com/kdb-guides/'>kdb Tutorials</a></p></div></body></html>"}[];	
+FOOTER:{"</div> <div class='footer'></div></body></html>"}[];	
 	
 TREEHEADER:{ a:,"<html><head>";
 	a,:,addCss["style.css"],addJs["simpletreemenu.js"];
