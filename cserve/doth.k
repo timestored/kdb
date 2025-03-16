@@ -48,11 +48,10 @@ TREEHEADER:{ a:,"<html><head>";
 	a,:,"</head><body id='listing'><h1 id='logo'><a href='/index.qhtml' target='v'><img src='images/portal-logo.png' height='150' width='130' /></a></h1>";
 	a,:,"<div id='shortcuts'>";
 	ms:{"<a href='",x,"' target='v'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"};
-	a,:,ms["/index.qhtml"; "ic_home"; "home"];
 	a,:,ms["query.html"; "ic_tabgo"; "query manager"];
 	a,:,ms["chart.html"; "ic_chart"; "time series chart"];
-	a,:,ms["help.html"; "ic_help"; "help"];
-	a,:,{"<a href='",x,"'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"}["/?"; "ic_refresh"; "reload navigation pane"];
+	a,:,ms["/qdocs/index.html"; "ic_help"; "help"];
+	// a,:,{"<a href='",x,"'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"}["/?"; "ic_refresh"; "reload navigation pane"];
 	,/ a,:,"</div>"}[];
 
 TREEFOOTER:{ c:htac[`script;(,`type)!,("text/javascript")]"ddtreemenu.createTree(\"treemenu1\", true)";
@@ -317,7 +316,7 @@ getPageParamPair:{$[0N=a:*: &: "?"=x; (`$x;""); (`$x@ !:a;(a+1)_x)]};
   "?]"~2#x; getVarAsHTML[2_x; 0b]     / raw result for ajax tables
   "?["~2#x; hy[`htm] @[{.Q.s .h.RUNNER x};2 _ x;{"'",x,"\r\n"}]  / raw result for console
   "?"=*x ; hy[`htm]htmlForDataTable@getVarAsHTML[1_x; 0b]
-  #r:@[1::;0N!`$":",p:HOME,"/",$pp 0;""]; $[isHtml[$pp 0]; hy; CACHEDHEADER] [0N!`$(1+x?".")_$pp 0; "c"$r]
+  #r:@[1::;0N!`$":",p:HOME,"/",$pp 0;""]; $[isHtml[$pp 0]; hy; CACHEDHEADER] [0N!`$(1+last ss[$pp 0;"."])_$pp 0; "c"$r]
   ~: ""~dynaPage:getPage[x]; hy[`htm]  dynaPage / if in dictionary of dynamic pages return result
   "?"in x; @[{hy[t]@`/:tx[t:`$-3#n#x]@ .h.RUNNER (1+n:x?"?")_x};x;he]
     hn["404 Not Found";`txt]p,": not found"]};

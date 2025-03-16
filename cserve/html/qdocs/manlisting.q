@@ -1,0 +1,10 @@
+.man.registerFunc (".math.FACTORIALS";".math";"";".math.FACTORIALS";"");
+.man.registerFunc (".math.add";".math";"";".math.add";"");
+.man.registerFunc (".math.getAreaofCircle";".math";"given a circles radius, return it's area.";".math.getAreaofCircle";"");
+.man.registerFunc (".math.getFactorial";".math";"";".math.getFactorial";"");
+.man.registerArg (".math.getFactorial";"return";"";"the product of all positive integers less than or equal to n only");
+.man.registerFunc (".math.getFactorialFast";".math";"";".math.getFactorialFast";"");
+.man.registerFunc (".math.getPrimesLessThan";".math";"";".math.getPrimesLessThan";".math.getPrimesLessThan[100]");
+.man.registerArg (".math.getPrimesLessThan";"eg";"";".math.getPrimesLessThan[100]");
+.man.registerArg (".math.getPrimesLessThan";"return";"";"list of prime numbers less than it's argument");
+.man.registerFunc (".math.sub";".math";"";".math.sub";"");
