@@ -193,6 +193,9 @@ getDisplayables:{.q.asc (!:a)@&: .: 100=a:@:' .: x};
 / text description of variable type
 typr:{$: @: x};
 
+.h.entityTbl:([fname:`$()]; title:(); lnk:());
+setEntityTbl:{.h.entityTbl:x};
+
 / make a list of the given items in a namespace (ns) and set the class of the links li to (lnkClass)
 makeListy:{[ns;items;lnkClass] 
 	formatTblLink:{[ns;item;lnkClass] 

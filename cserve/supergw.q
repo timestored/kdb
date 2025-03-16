@@ -57,7 +57,12 @@
     reval (value;qCode)};
 
 sys:{system 0N!"l ",x};
-sys each ("html.q";"doth.k";"cserve.q");
+sys each ("html.q";"doth.k";"cserve.q";"math.q");
+.supergw.funcs:([fname:`$()]; ns:(); description:(); name:(); eg:());
+.supergw.args:([arg:`$(); tag:`$()];  param:(); description:());
+.man.registerFunc:{`.supergw.funcs upsert "SS***"$x};
+.man.registerArg:{`.supergw.args upsert "SS**"$x};
+system "l html/qdocs/manlisting.q";
 .h.RUNNER:.supergw.smartEval;
 X:(::;::);
 .z.pg:{X::X,enlist x; .supergw.smartEval x};
