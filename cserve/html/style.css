@@ -36,7 +36,6 @@ h2 {
     border-right: 1px solid #047;
     border-left: 1px solid #047;
     border-bottom: 1px solid #047;
-	background: #D0D0FF;
 	color:#2580A2;
 	text-align:center;
 }
@@ -207,7 +206,6 @@ height:98%;
 
 body#listing { 
 	margin:0;
-	background: #D0D0FF; 
 	font-size:80%;  
 	width: auto;
 }

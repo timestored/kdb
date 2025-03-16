@@ -45,7 +45,7 @@ FOOTER:{"</div> <div class='footer'><p><a href='http://www.timestored.com/kdb-gu
 	
 TREEHEADER:{ a:,"<html><head>";
 	a,:,addCss["style.css"],addJs["simpletreemenu.js"];
-	a,:,"</head><body id='listing'><h1 id='logo'><a href='/index.qhtml' target='v'><span>q</span>Web<span>Explorer</span></a></h1>";
+	a,:,"</head><body id='listing'><h1 id='logo'><a href='/index.qhtml' target='v'><img src='images/portal-logo.png' height='150' width='130' /></a></h1>";
 	a,:,"<div id='shortcuts'>";
 	ms:{"<a href='",x,"' target='v'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"};
 	a,:,ms["/index.qhtml"; "ic_home"; "home"];
