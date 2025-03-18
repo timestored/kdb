@@ -63,9 +63,11 @@ sys each ("html.q";"doth.k";"cserve.q";"math.q");
 .man.registerFunc:{`.supergw.funcs upsert "SS***"$x};
 .man.registerArg:{`.supergw.args upsert "SS**"$x};
 system "l html/qdocs/manlisting.q";
-.h.RUNNER:.supergw.smartEval;
-X:(::;::);
-.z.pg:{X::X,enlist x; .supergw.smartEval x};
-.supergw.refreshMetaData[];
-.kdb.run:.cserve.smartSelect[;;()!()];
--1 ".kdb.run[`a;\"select from t\"]";
+
+/ .h.RUNNER:.supergw.smartEval;
+/ X:(::;::);
+/ .z.pg:{X::X,enlist x; .supergw.smartEval x};
+/ .supergw.refreshMetaData[];
+/ .kdb.run:.cserve.smartSelect[;;()!()];
+/ -1 ".kdb.run[`a;\"select from t\"]";
+

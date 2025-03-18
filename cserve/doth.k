@@ -22,12 +22,6 @@ getId:{id::id+1; if[id>9999; id::0]; id};
 / human readable form PC name / IP address
 pcLoc:{($: .z.h)," ",("."/:$: `int$0x00 \: .z.a)};
 
-FRAMESET:{
-	title:	pcLoc[]," | qWebExplorer";
-	a:"<link rel='icon' href='./favicon.ico' type='image/x-icon' /><link rel='shortcut icon' href='./favicon.ico' type='image/x-icon' />";
-	a,:"<frameset frameborder='no' cols='220,*' scrolling='yes'><frame src='/?'><frame name='v' src='index.qhtml'></frameset>"
-	htc[`html](htc[`head]htc[`title;title]),a}[];
-
 
 CACHEDHEADER:{ bb:"\r\nLast-Modified: Tue, 15 Nov 1994 12:45:26 GMT\r\nExpires: Sun, 17-Jan-2038 19:14:07 GMT";
 	cc:"\r\nCache-Control: Public, max-age=31536000\r\nConnection: close\r\nContent-Length: ";
@@ -43,19 +37,16 @@ HEADER:{a:,"<html><head>";
 	
 FOOTER:{"</div> <div class='footer'></div></body></html>"}[];	
 	
-TREEHEADER:{ a:,"<html><head>";
-	a,:,addCss["style.css"],addJs["simpletreemenu.js"];
-	a,:,"</head><body id='listing'><h1 id='logo'><a href='/index.qhtml' target='v'><img src='images/portal-logo.png' height='150' width='130' /></a></h1>";
+TREEHEADER:{ a:,"<h1 id='logo'><a href='/' target='v'><img src='images/portal-logo.png' height='150' width='130' /></a></h1>";
 	a,:,"<div id='shortcuts'>";
 	ms:{"<a href='",x,"' target='v'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"};
 	a,:,ms["query.html"; "ic_tabgo"; "query manager"];
 	a,:,ms["chart.html"; "ic_chart"; "time series chart"];
-	a,:,ms["/qdocs/index.html"; "ic_help"; "help"];
+	a,:,"<a href='/qdocs/index.html' target='_blank'><img src='d.gif' class='icon ic_help' title='help' alt='help' /></a>";
 	// a,:,{"<a href='",x,"'><img src='d.gif' class='icon ",y,"' title='",z,"' alt='",z,"' /></a>"}["/?"; "ic_refresh"; "reload navigation pane"];
 	,/ a,:,"</div>"}[];
 
-TREEFOOTER:{ c:htac[`script;(,`type)!,("text/javascript")]"ddtreemenu.createTree(\"treemenu1\", true)";
-	c,"</body></html>"}[];	
+TREEFOOTER:{ htac[`script;(,`type)!,("text/javascript")]"ddtreemenu.createTree(\"treemenu1\", true)"}[];	
 	
 	
 / ############ common code ################################
@@ -202,7 +193,7 @@ makeListy:{[ns;items;lnkClass]
 		lnk:,/ $[ns in `.q`.; ($:item); ($:ns),".",($:item)];
 		/ show args for functions
 		txt:item,$[100h~@:(.: lnk); $[~`x~c:(. . lnk)[1]; "[",(";"/:$c),"]"; ""]; ""];
-		htac[`li;(`title`class)!((vv);,/,/lnkClass," ",(" "/:"typ",/: 1_" "\: vv:typr[. ,/,/$:lnk]))]htac[`a;(`target`href)!(,"v";(,/"i.qhtml?e=",lnk))]@txt };
+		htac[`li;(`title`class)!((vv);,/,/lnkClass," ",(" "/:"typ",/: 1_" "\: vv:typr[. ,/,/$:lnk]))]htac[`a;(`target`href)!(,"v";(,/"qry?q=",lnk))]@txt };
 	formatTblLink[ns;;lnkClass]@'$:items};
 	
 / make a list of links from the array (("name";"url1");("name2";"url2"))	
@@ -309,20 +300,19 @@ getPageParamPair:{$[0N=a:*: &: "?"=x; (`$x;""); (`$x@ !:a;(a+1)_x)]};
 
 .z.ph:{
   isHtml:{".html" ~ x (-1 + #:x) - |: !: 5};
-	x:uh$[@x;x;*x];
+    x:uh$[@x;x;*x];
     pp:@[getPageParamPair;x;(`;"")];
-	$[LOGQUERIES;1 "\n----.z.ph ",.Q.s x; ::];
-	doFrameset:{hy[`htm]FRAMESET};
-	$[~#x; doFrameset[x]
-  x~,"?"; {hy[`htm] TREEHEADER,getMenu[],TREEFOOTER}[]
-  ".gjs?"~5#x; formatGoogVis[5_x]
-  "?]"~2#x; getVarAsHTML[2_x; 0b]     / raw result for ajax tables
-  "?["~2#x; hy[`htm] @[{.Q.s .h.RUNNER x};2 _ x;{"'",x,"\r\n"}]  / raw result for console
-  "?"=*x ; hy[`htm]htmlForDataTable@getVarAsHTML[1_x; 0b]
-  #r:@[1::;0N!`$":",p:HOME,"/",$pp 0;""]; $[isHtml[$pp 0]; hy; CACHEDHEADER] [0N!`$(1+last ss[$pp 0;"."])_$pp 0; "c"$r]
-  ~: ""~dynaPage:getPage[x]; hy[`htm]  dynaPage / if in dictionary of dynamic pages return result
-  "?"in x; @[{hy[t]@`/:tx[t:`$-3#n#x]@ .h.RUNNER (1+n:x?"?")_x};x;he]
-    hn["404 Not Found";`txt]p,": not found"]};
+    $[LOGQUERIES;1 "\n----.z.ph ",.Q.s x; ::];
+    $[(~#x)|(pp[0] in `qry); hy[`htm] "c"$1::`$":",HOME,"/index.html"
+      x~,"?"; {hy[`htm] TREEHEADER,getMenu[],TREEFOOTER}[]
+      ".gjs?"~5#x; formatGoogVis[5_x]
+      "?]"~2#x; getVarAsHTML[2_x; 0b]     / raw result for ajax tables
+      "?["~2#x; hy[`htm] @[{.Q.s .h.RUNNER x};2 _ x;{"'",x,"\r\n"}]  / raw result for console
+      "?"=*x ; hy[`htm]htmlForDataTable@getVarAsHTML[1_x; 0b]
+      #r:@[1::;0N!`$":",p:HOME,"/",$pp 0;""]; $[isHtml[$pp 0]; hy; CACHEDHEADER] [0N!`$(1+last ss[$pp 0;"."])_$pp 0; "c"$r]
+      ~: ""~dynaPage:getPage[x]; hy[`htm]  dynaPage / if in dictionary of dynamic pages return result
+      "?"in x; @[{hy[t]@`/:tx[t:`$-3#n#x]@ .h.RUNNER (1+n:x?"?")_x};x;he]
+        hn["404 Not Found";`txt]p,": not found"]};
 
  
 \d .

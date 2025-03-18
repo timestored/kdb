@@ -1,5 +1,4 @@
 body { 
-	width:95%; 
 	margin: 20px 11px;  
 }
 
@@ -27,6 +26,11 @@ h2 {
     }
 	
 
+#listing { width:25%; float:left; }
+
+#content {
+	margin-left:29%;
+}
 /******************** FOOTER CSS *******************/
 
 .footer  {
@@ -51,15 +55,6 @@ h2 {
 	color: #2580A2;
 }	
 	
-/******************** data result containers *******************/
-
-body#dataRes {
-}
-
-
-body#dataRes #inner {
-	
-}
 
 /********************   Pagination   ***********************/
 .pagin{
@@ -198,16 +193,10 @@ col.key {  border-right: 2px solid #000000;}
 
 /******************** LISTING CSS *******************/
 
-html {
-height:98%;
-	border-right: 1px solid #229;
-	width: auto;
-}
 
-body#listing { 
+#listing { 
 	margin:0;
 	font-size:80%;  
-	width: auto;
 }
 
 body#listing,#listing  a, #listing a:hover, #listing a:focus, #listing a:active {
@@ -245,7 +234,7 @@ a:hover {
 }
 	
 #listing #treemenu1  {
-padding:0;
+    padding:0;
 	margin-left:15px;
 }
 

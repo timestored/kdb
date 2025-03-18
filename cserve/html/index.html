@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QPortal</title>
+	<link rel='icon' href='./favicon.ico' type='image/x-icon' /><link rel='shortcut icon' href='./favicon.ico' type='image/x-icon' />
+<style type="text/css">@import 'style.css';</style>
+<style type="text/css">@import 'simpletree.css';</style>
+<style type="text/css">@import 'codemirror.css';</style>
+<script type="text/javascript" src="sortable.js"></script>
+<script type="text/javascript" src="codemirror.js"></script>
+<script type="text/javascript" src="simpletreemenu.js"></script>
+</head>
+<body id='qhome'>
+
+<div id="listing">
+ <div id="sidebar" class="">
+</div>
+</div>
+
+<div id="content">
+</div> 
+
+<div class='footer'></div>
+
+<script type="text/javascript">
+fetch('/?')
+      .then(response => response.text())  // Parse response as text
+      .then(data => {
+		document.getElementById('sidebar').innerHTML = data;
+		const parentElement = document.getElementById("treemenu1");
+		if (parentElement) {
+			const links = parentElement.querySelectorAll("a");
+			links.forEach(link => {
+				link.addEventListener("click", function (event) {
+					event.preventDefault(); // Prevent default navigation
+					loadPage(this.href);
+				});
+			});
+		}
+		ddtreemenu.createTree("treemenu1", true);
+	  }); 
+
+function parseUrl(urlString) {
+    try {
+        const url = new URL(urlString, window.location.origin); // Ensure it works with relative URLs
+        const path = url.pathname; // Extract path (e.g., "/query/something")
+        const params = Object.fromEntries(new URLSearchParams(url.search)); // Convert search params to an object
+        
+        return { path, params, search:url.search };
+    } catch (error) {
+        console.error("Invalid URL:", error);
+        return null;
+    }
+}	  
+	  
+  
+function redrawQuery(target) {
+	window.myCodeMirror && myCodeMirror.save();
+	ajax('/?]'+escape(document.getElementById("query").value), 'qresults');
+	sortables_init();
+};
+
+function download(type) {
+	window.myCodeMirror && myCodeMirror.save();
+	window.location.href = 'file.' + type + '?'+escape(document.getElementById("query").value);
+};
+
+function benchByLine() {
+	window.myCodeMirror && myCodeMirror.save();
+	ajax('/?]' + escape('.h.benchByLine("'+document.getElementById("query").value +'")'), 'qresults');
+	sortables_init();
+};
+
+
+function autoRefresh() {
+	if(document.getElementById("autorefresh").checked) {
+		redrawQuery();
+		setTimeout("autoRefresh()",3000);
+	}
+};
+
+
+	  
+function loadPage(urlString, setURL=true) {
+	const pathParams = parseUrl(urlString);
+	const path = pathParams.path;
+	if(setURL) {
+		history.pushState(null, "", urlString);
+	}
+	console.log("path",path);
+	var url = path == "/qry" ? "query.html?"+pathParams.search 
+		: path == "/" ? "index.partial.html?"+pathParams.search
+		: urlString;
+	fetch(url)
+      .then(response => response.text())  // Parse response as text
+      .then(data => {
+		document.getElementById('content').innerHTML = data;
+		if(path == "/qry") {
+			const e = document.getElementById("query");
+			if(e) {
+				if(pathParams.params.q) {
+					e.value = decodeURIComponent(pathParams.params.q);
+				}
+				window.myCodeMirror = CodeMirror.fromTextArea(e, {
+					lineNumbers: true,
+					matchBrackets: true,
+					indentUnit: 4,
+					tabMode: "default",
+					mode: "text/x-q"
+				  });
+				
+			}
+		}
+	  }); 	  
+	  return false;
+}
+const pn = window.location.pathname;
+const curPath = pn + window.location.search + window.location.hash;
+loadPage(curPath, false);
+
+</script>
+
+</body>
+</html>
