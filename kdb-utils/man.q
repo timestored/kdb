@@ -85,7 +85,7 @@ getSystemReport:{getReport .man.sysReport[`query]};
 getSystemReportFor:getReportFor[.man.sysReport[`query];];
 
 / return true if the first character of a symbol is uppercase, false otherwise											
-k)isUpperCase:{(`int$"a") > `int$ *: $: x};
+isUpperCase:{(`int$"a") > `int$ first string x};
 
 / the size of the different column types
 m:"bxhijefcsmdzuvt"!1 1 2 4 8 4 8 1 8 4 4 8 4 4 4j;
