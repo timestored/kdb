@@ -1,4 +1,7 @@
 / Mathematical functions
+// @url https://www.timestored.com/kdb-guides/kdb-regression-unit-tests
+/ @teams https://teams
+
 system "d .math";
 
 add:{x+y};
@@ -8,6 +11,7 @@ sub:{x-y};
 getAreaofCircle:{[r] -4*atan[-1]*r*r};
 
 / @return list of prime numbers less than it's argument
+/ @eg .math.getPrimesLessThan[100]
 getPrimesLessThan:{$[x<4;enlist 2;r,1_where not any x#'not til each r:.z.s ceiling sqrt x]};
 
 / @return the product of all positive integers less than or equal to n only 

@@ -66,6 +66,16 @@ doCheck:{ [checkPassed; failMsg]
     if[failFlag and not .qunit.ignoreAllExceptions;
         'failMsg];};
             
+checkTable:{ [actual; expectedTbl]
+    if[not .Q.qt expectedTbl; '"Expected must be table"];
+    a:actual; e:expectedTbl;
+    doCheck[.Q.qt actual; "expected an actual table"];
+    doCheck[(asc cols a)~asc cols e; "tables have same columns"];
+    doCheck[(count a)~count e; "tables have same number rows"];
+    doCheck[(meta a)~meta e; "tables have same meta"];
+    doCheck[(keys a)~keys e; "tables have same keys"];
+    };
+            
 // Assert that actual and expected value are equal
 // @param actual An object representing the actual result value
 // @param expected An object representing the expected value
@@ -76,12 +86,35 @@ assertEquals:{ [actual; expected; msg]
     ar::`actual`expected`msg!(actual;expected;msg);
     if[a~e; :a];
     if[.Q.qt e;
-        doCheck[.Q.qt actual; "assertEquals expected an actual table"];
-        doCheck[(asc cols a)~asc cols e; "assertEquals tables have same columns"];
-        doCheck[(count a)~count e; "assertEquals tables have same number rows"];
+        checkTable[a;e];
         doCheck[all/[a=e]; "assertEquals tables have same data"];
         :a];
     assertThat[a;~;e;msg]};
+	
+// Assert that actual and expected values are almost equal i.e. that floating types 8/9h are within a small specified difference.
+// @param actual An object representing the actual result value
+// @param expected An object representing the expected value
+// @param permittedDifferenceInFloats The permitted absolute difference in value between actual/expected. i.e. permittedDifferenceInFloats>abs actual-expected
+// @return actual object
+assertAlmostEquals:{ [actual; expected; permittedDifferenceInFloats]
+    a:actual; e:expected; aTh:assertThat; / shortcuts
+    ar::`actual`expected`msg!(actual;expected;"");
+    if[a~e; :a];
+    if[.Q.qt e;
+        checkTable[a;e];
+        :.z.s[flip () xkey a; flip () xkey e; permittedDifferenceInFloats]
+		];
+    if[99h=type e;
+        doCheck[key[a]~key e; "dict keys match"];
+        :(.z.s[;;permittedDifferenceInFloats].)  each  flip (value a;value e);
+        ];
+    if[0h=type e;
+        :(.z.s[;;permittedDifferenceInFloats].)  each  flip (a;e)];
+    / List or atoms with types<>0 left
+    $[(abs type a) in 8 9h;
+        doCheck[all/[?[null a;null e;permittedDifferenceInFloats >= abs a-e]]; "assertEquals data has big difference"];
+        doCheck[all/[a=e]; "Almost equal exact type match fail"]];
+    a};
 
 // Assert that the expectedFilename in the expectedPath contains a variable
 // that is equal to actual.
