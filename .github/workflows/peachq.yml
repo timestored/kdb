@@ -1,0 +1,70 @@
+# Optional: not a required check.
+name: tests (optional)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: pq
+        uses: peachq-org/setup-peachq@v1.0.0
+        with:
+          version: 0.92.20261116
+      - shell: bash
+        run: |
+          # Each qunit test file runs as qunit/readme.md shows: from its own directory, load qunit, the code, the tests.
+          # Not counted: testGetPrimesLessThanMinusOne and testExceptionShownInUnitTests fail on purpose to show a failure;
+          # testGetFactorialSpeed's 100ms limit is a kdb timing (peachq's recursion is slower today).
+          # Not run: cserve/cserveTest.q queries rdb/hdb services started by cserve/runcserve.bat.
+          cat > "$RUNNER_TEMP/qunit.q" <<'EOF'
+          skip:`.mathTest.testGetPrimesLessThanMinusOne`.mathTest.testExceptionShownInUnitTests`.mathTest.testGetFactorialSpeed;
+          system "l ",getenv[`GITHUB_WORKSPACE],"/qunit/qunit.q";
+          {system "l ",x; system "d ."} each 1_.z.x;
+          r:@[.qunit.runTests;`$first .z.x;{-1 "runTests error: ",x; ([] status:enlist `error; name:enlist `runTests)}];
+          r:select from r where not name in skip;
+          show select status,name,msg from r where status<>`pass;
+          -1 "qunit ",(first .z.x)," ",string[sum `pass=r`status]," ",string count r;
+          exit "j"$any `pass<>r`status
+          EOF
+          # Every library file loads on its own, one process each, from its own directory.
+          # Not loaded: cserve/supergw.q loads doth.k (peachq runs q, not k); cserve/html/qdocs/manlisting.q is data
+          # supergw.q loads after defining .man.registerFunc; cserve/{rdb,hdb}.q are servers and hdb.q writes a database;
+          # cserve/{example-queries,useful-snippets}.q are console snippets against running services;
+          # c-dll-example/load-functions.q needs the compiled DLL; parallel-peach-kdb/peachy.q is a timing demo for -s 2
+          # (and peachq has no .Q.fc yet).
+          cat > "$RUNNER_TEMP/load.q" <<'EOF'
+          exit @[{system "l ",x; 0};first .z.x;{-1 "load error: ",x; 1}]
+          EOF
+          fail=0; pass=0; total=0; loaded=0; files=0
+          while read -r dir ns code; do
+            out=$(cd "$dir" && $QCMD "$RUNNER_TEMP/qunit.q" -classic "$ns" $code < /dev/null 2>&1) || fail=1
+            echo "$out"
+            read -r p n < <(sed -n "s/^qunit $ns //p" <<< "$out")
+            pass=$((pass + ${p:-0})); total=$((total + ${n:-1}))
+          done <<'EOF'
+          qunit .mathTest math.q mathTest.q
+          qunit .mathParametersTest math.q mathParametersTest.q
+          kdb-utils .utilTest util.q utilTest.q
+          kdb-utils .tblTest tbl.q tblTest.q
+          EOF
+          for f in qunit/{qunit,math,man2,manlisting}.q kdb-utils/{util,tbl,logger,html,man,dbreporter}.q \
+                   cserve/{cserve,aserve,html,math,rates}.q; do
+            files=$((files + 1))
+            if (cd "$(dirname "$f")" && $QCMD "$RUNNER_TEMP/load.q" -classic "$(basename "$f")" < /dev/null); then
+              loaded=$((loaded + 1)); echo "ok   $f"
+            else
+              fail=1; echo "FAIL $f"
+            fi
+          done
+          echo "**peachq ${{ steps.pq.outputs.version }}:** qunit: $pass of $total passed; loads: $loaded of $files" >> "$GITHUB_STEP_SUMMARY"
+          exit $fail
